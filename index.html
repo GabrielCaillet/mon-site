@@ -1,59 +1,51 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="UTF-8">
-    <title>Page de jeu</title>
-    <style>
-        body {
-            background-color: black;
-            color: pink;
-            text-align: center;
-            font-family: Arial;
-        }
-
-        button {
-            padding: 20px;
-            font-size: 20px;
-            margin-top: 20px;
-            cursor: pointer;
-        }
-    </style>
+    <title>3D Shooting Game</title>
+    <script src="https://cdn.babylonjs.com/babylon.js"></script>
 </head>
 <body>
-
-    <h1>Bienvenue sur mon Jeu</h1>
-    <p>Ceci est une page présentant plusieurs jeux</p>
-    <p>Le premier jeu s'appelle gfv</p>
-
-    <hr>
-
-    <h2>🎮 Clique le plus vite possible !</h2>
-    <p>Temps restant : <span id="temps">10</span> s</p>
-    <p>Score : <span id="score">0</span></p>
-
-    <button onclick="cliquer()">Clique ici !</button>
-
+    <canvas id="renderCanvas"></canvas>
     <script>
-        let score = 0;
-        let temps = 10;
+        // Create the physics engine
+        var canvas = document.getElementById('renderCanvas');
+        var engine = new BABYLON.Engine(canvas, true);
 
-        function cliquer() {
-            if (temps > 0) {
-                score++;
-                document.getElementById("score").textContent = score;
-            }
-        }
+        var createScene = function () {
+            var scene = new BABYLON.Scene(engine);
+            var camera = new BABYLON.ArcRotateCamera('camera1', Math.PI / 2, Math.PI / 3, 10, new BABYLON.Vector3(0, 0, 0), scene);
+            camera.attachControl(canvas, true);
+            var light = new BABYLON.HemisphericLight('light1', new BABYLON.Vector3(1, 1, 0), scene);
+            var ground = BABYLON.MeshBuilder.CreateGround('ground', { width: 10, height: 10 }, scene);
 
-        let timer = setInterval(function() {
-            temps--;
-            document.getElementById("temps").textContent = temps;
+            // Shooting Game Logic
+            var bullets = [];
+            scene.onPointerDown = function (evt) {
+                var bullet = new BABYLON.MeshBuilder.CreateSphere('bullet', { diameter: 0.1 }, scene);
+                bullet.position = camera.position.clone();
+                bullet.moveDirection = camera.getDirection(BABYLON.Axis.Z);
+                bullets.push(bullet);
 
-            if (temps <= 0) {
-                clearInterval(timer);
-                alert("⏱️ Temps écoulé ! Ton score : " + score);
-            }
-        }, 1000);
+                // Animate bullet
+                var animation = new BABYLON.Animation('bulletAnim', 'position', 30, BABYLON.Animation.ANIMATIONTYPE_VECTOR3, BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE);
+                var keyFrames = [];
+                keyFrames.push({ frame: 0, value: bullet.position });
+                keyFrames.push({ frame: 50, value: bullet.position.add(camera.getDirection(BABYLON.Axis.Z).scale(10)) });
+                animation.setKeys(keyFrames);
+                bullet.animations.push(animation);
+                scene.beginAnimation(bullet, 0, 50, false);
+            };
+
+            return scene;
+        };
+
+        var scene = createScene();
+        engine.runRenderLoop(function () {
+            scene.render();
+        });
+        window.addEventListener('resize', function () {
+            engine.resize();
+        });
     </script>
-
 </body>
 </html>
