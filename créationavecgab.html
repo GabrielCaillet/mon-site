@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+<body style="background-color: black;">
+<style>
+    body {
+        color: pink;
+    }
+</style>
+    <meta charset="UTF-8">
+ <center><title>Page de jeu</title>
+</head>
+<body>
+<center>
+    <h1>Bienvenue sur mon Jeu</h1>
+    <p>Ceci est une page présentant plusieurs jeux</p><center>
+	<br>
+	<br>
+<p>Le premier jeu s'apelle gfv<p>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Mini jeu</title>
+    <style>
+        body {
+            background-color: black;
+            color: pink;
+            text-align: center;
+            font-family: Arial;
+        }
+
+        button {
+            padding: 20px;
+            font-size: 20px;
+            margin-top: 20px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>🎮 Clique le plus vite possible !</h1>
+    <p>Temps restant : <span id="temps">10</span> s</p>
+    <p>Score : <span id="score">0</span></p>
+
+    <button onclick="cliquer()">Clique ici !</button>
+
+    <script>
+        let score = 0;
+        let temps = 10;
+
+        function cliquer() {
+            if (temps > 0) {
+                score++;
+                document.getElementById("score").textContent = score;
+            }
+        }
+
+        let timer = setInterval(function() {
+            temps--;
+            document.getElementById("temps").textContent = temps;
+
+            if (temps <= 0) {
+                clearInterval(timer);
+                alert("⏱️ Temps écoulé ! Ton score : " + score);
+            }
+        }, 1000);
+    </script>
+
+</body>
+</html>
+</body>
+</html>
